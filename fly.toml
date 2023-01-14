@@ -1,4 +1,4 @@
-# fly.toml file generated for holy-sun-2102 on 2023-01-14T17:31:16+01:00
+# fly.toml file generated for holy-sun-2102 on 2023-01-14T19:09:15+01:00
 
 app = "holy-sun-2102"
 kill_signal = "SIGINT"
@@ -6,6 +6,7 @@ kill_timeout = 5
 processes = []
 
 [env]
+  PORT = "8080"
 
 [experimental]
   auto_rollback = true
