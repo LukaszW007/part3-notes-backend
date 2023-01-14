@@ -10,6 +10,9 @@ processes = []
 
 [experimental]
   auto_rollback = true
+  
+[build]
+  builder = "heroku/buildpacks:20"
 
 [[services]]
   http_checks = []
