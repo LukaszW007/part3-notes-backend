@@ -23,6 +23,7 @@ let notes = [
 ]
 
 app.use(express.json())
+app.use(express.static('build'))
 
 app.get('/', (req, res) => {
   res.send('<h1>Hello World!</h1>')
@@ -39,8 +40,8 @@ app.post('/api/notes', (request, response) => {
   const body = request.body
 
   if (!body.content) {
-    return response.status(400).json({ 
-      error: 'content missing' 
+    return response.status(400).json({
+      error: 'content missing'
     })
   }
 
