@@ -79,6 +79,23 @@ app.get('/api/notes/:id', (request, response) => {
   }
 })
 
+app.put('/api/notes/:id', (request, response)=> {
+    const id = request.params.id;
+    const note = notes.find(note=> note.id == id);
+
+    if (note) {
+        const noteIndex = notes.indexOf(note);
+        console.log('REQUEST ', request.body)
+        notes[noteIndex] = request.body;
+        response.json(notes[noteIndex]);
+    } else {
+        response.send('<h1 id="text">There is no any note with id</h1>');
+        response.status(404).end();
+    }
+
+})
+
+
 const PORT = 3001
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
