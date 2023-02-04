@@ -4,8 +4,7 @@ const Note = require('./models/note')
 
 const app = express()
 
-const url =
-    `mongodb+srv://luwi:${password}@todolist.gdm9f13.mongodb.net/noteApp?retryWrites=true&w=majority`
+const url = `mongodb+srv://luwi:${password}@todolist.gdm9f13.mongodb.net/noteApp?retryWrites=true&w=majority`
 
 mongoose.set('strictQuery',false)
 mongoose.connect(url)
