@@ -1,41 +1,11 @@
-require('dotenv').config()
 const express = require('express')
 const app = express()
 const cors = require('cors')
+require('dotenv').config()
 
 app.use(cors())
-const mongoose = require('mongoose')
+const Note = require('./models/note')
 
-// const Note = require('./models/note')
-
-const url = process.env.MONGODB_URI
-
-mongoose.set('strictQuery',false)
-
-console.log('connecting to', url)
-
-mongoose.connect(url)
-    .then(result => {
-        console.log('connected to MongoDB')
-    })
-    .catch((error) => {
-        console.log('error connecting to MongoDB:', error.message)
-    })
-
-const noteSchema = new mongoose.Schema({
-    content: String,
-    important: Boolean,
-})
-
-noteSchema.set('toJSON', {
-    transform: (document, returnedObject) => {
-        returnedObject.id = returnedObject._id.toString()
-        delete returnedObject._id
-        delete returnedObject.__v
-    }
-})
-
-const Note = mongoose.model('Note', noteSchema)
 
 // let notes = [
 //   {
@@ -130,3 +100,11 @@ const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
+
+//problems with deploy:full
+// --> Verified app config
+// ==> Building image
+// WARN Failed to start remote builder heartbeat: You hit a Fly API error with request ID: 01GRF3297M6NGQ9AN1AENYBSNW-dfw
+// Error failed to fetch an image or build from source: You hit a Fly API error with request ID: 01GRF329PYMMH3M6HNNXRTPDZ1-dfw
+//
+// to fix it: flyctl version update, flyctl agent restart , and then, npm run deploy:full
