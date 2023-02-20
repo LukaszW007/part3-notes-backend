@@ -51,12 +51,7 @@ app.post('/api/notes', (request, response) => {
     })
   }
 
-    const note = new Note({
-        content: body.content,
-        important: body.important || false,
-    })
-
-    note.save().then(savedNote => {
+  Note.create(body).then(savedNote => {
         response.json(savedNote)
     })
 })
@@ -68,32 +63,27 @@ app.get('/api/notes', (req, res) => {
 })
 
 app.delete('/api/notes/:id', (request, response) => {
-  const id = Number(request.params.id)
-  notes = notes.filter(note => note.id !== id)
-
-  response.status(204).end()
+    Note.findByIdAndRemove(request.params.id).then(deletedCount => {
+        if (deletedCount) {
+            console.log("item with id ",request.params.id," is deleted")
+        } else {
+            console.log("item with id ",request.params.id," not found")
+        }
+        response.status(204).end()
+    })
 })
 
 app.get('/api/notes/:id', (request, response) => {
     Note.findById(request.params.id).then(note => {
         response.json(note)
     })
-}) ///do sprawdzenia lokalnie, pewnie zmiany w put, delete i get po id
+})
 
 app.put('/api/notes/:id', (request, response)=> {
-    const id = request.params.id;
-    const note = notes.find(note=> note.id == id);
-
-    if (note) {
-        const noteIndex = notes.indexOf(note);
-        console.log('REQUEST ', request.body)
-        notes[noteIndex] = request.body;
-        response.json(notes[noteIndex]);
-    } else {
-        response.send('<h1 id="text">There is no any note with id</h1>');
-        response.status(404).end();
-    }
-
+    Note.findByIdAndUpdate(request.params.id, request.body).then(note => {
+        response.json(note)
+        console.log("item updated to ",request.body)
+    })
 })
 
 const PORT = process.env.PORT || 3001
