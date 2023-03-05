@@ -13,7 +13,7 @@ const generateId = () => {
     return maxId + 1
 }
 
-notesRouter.post('/api/notes', (request, response, next) => {
+notesRouter.post('/api/notes', async (request, response, next) => {
     const body = request.body
 
     logger.info('body ',body)
@@ -35,60 +35,49 @@ notesRouter.post('/api/notes', (request, response, next) => {
     //     })
     // }
 
-    Note.create(note)
-        .then(savedNote => {
-            response.json(savedNote.toJSON())
-        })
-        .catch(error => next(error))
+    const savedNote = await Note.create(note)
+    response.status(201).json(savedNote.toJSON())
+    // response.json(savedNote.toJSON())
 })
 
-notesRouter.get('/api/notes', (req, res) => {
-    Note.find({})
-        .then(notes=> {
-            res.json(notes);
-        })
-        .catch(error => next(error))
+notesRouter.get('/api/notes', async (req, res) => {
+    const notes = await Note.find({})
+    res.status(200).json(notes)
 })
 
-notesRouter.delete('api/notes/:id', (request, response, next) => {
-    Note.findByIdAndRemove(request.params.id)
-        .then(deletedCount => {
-            if (deletedCount) {
-                logger.info("item with id ",request.params.id," is deleted")
-            } else {
-                logger.info("item with id ",request.params.id," not found")
-            }
-            response.status(204).end()
-        })
-        .catch(error => next(error))
+notesRouter.delete('/api/notes/:id', async (request, response, next) => {
+    const deletedCount = await Note.findByIdAndRemove(request.params.id)
+    if (deletedCount) {
+        logger.info("item with id ",request.params.id," is deleted")
+    } else {
+        logger.info("item with id ",request.params.id," not found")
+    }
+    response.status(204).end()
 })
 
-notesRouter.get('api/notes/:id', (request, response, next) => {
-    Note.findById(request.params.id)
-        .then(note => {
-            if (note) {
-                response.json(note)
-            } else {
-                response.status(404).end()
-            }
-        })
-        .catch(error => next(error))
+notesRouter.get('/api/notes/:id', async (request, response, next) => {
+    logger.info('NOTErequest.params.id:',request.params)
+    const note = await Note.findById(request.params.id)
+    logger.info('NOTE:',note)
+
+    if (note) {
+        response.status(200).json(note)
+    } else {
+        response.status(404).end()
+    }
 })
 
 
-notesRouter.put('api/notes/:id', (request, response, next)=> {
+notesRouter.put('/api/notes/:id', async (request, response, next)=> {
     const body = request.body
 
     const note = {
         content: body.content,
         important: body.important,
     }
-    Note.findByIdAndUpdate(request.params.id, note, { new: true, runValidators: true, context: 'query' })
-        .then(updatedNote => {
-            response.json(updatedNote)
-            logger.info("item updated to ",request.body)
-        })
-        .catch(error => next(error))
+    const updatedNote = await Note.findByIdAndUpdate(request.params.id, note, { new: true, runValidators: true, context: 'query' })
+    response.status(201).json(updatedNote)
+    logger.info("item updated to ",request.body)
 })
 
 module.exports = notesRouter
